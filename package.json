@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "browser-sync start -s \"src\" -f \".\"",
-    "watch": "babel src -d dist --presets es2015 -w",
-    "build": "babel src -d dist --presets es2015"
+    "serve": "browser-sync start -s \"src\" -f \".\""
   },
   "babel": {
     "presets": [

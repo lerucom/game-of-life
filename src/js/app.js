@@ -4,11 +4,25 @@ const GRID_ROWS = 36;
 const GRID_COLS = 64;
 const GAME_SPEED = 100;
 
+const grid = createGrid(GRID_ROWS, GRID_COLS);
+const nextGrid = createGrid(GRID_ROWS, GRID_COLS);
+
 let isPlaying = false;
 
 const root = document.querySelector('#root');
 const table = createTable(GRID_ROWS, GRID_COLS);
 createControls();
+
+function updateView() {
+    for (let i = 0; i < grid.length; i++) {
+        for (let j = 0; j < grid[i].length; j++) {
+            const cell = table.rows[i].cells[j];
+            const isCellAlive = grid[i][j];
+
+            cell.classList.toggle('alive', isCellAlive)
+        }
+    }
+}
 
 function createTable(rows, cols) {
     const table = document.createElement('table');
@@ -32,9 +46,18 @@ function createTable(rows, cols) {
     }
 
     table.addEventListener('click', (evt) => {
-        if (!event.target.classList.contains('cell')) return;
+        if (!event.target.classList.contains('cell')) {
+            return
+        }
+
         const cell = evt.target;
-        cell.classList.toggle('alive');
+        const rowIndex = cell.parentNode.rowIndex;
+        const cellIndex = cell.cellIndex;
+        const isCellAlive = grid[rowIndex][cellIndex] === 1;
+
+        grid[rowIndex][cellIndex] = isCellAlive ? 0 : 1;
+
+        cell.classList.toggle('alive', !isCellAlive);
     });
 
     root.appendChild(table);
@@ -70,6 +93,10 @@ function createControls() {
     randomizeButton.addEventListener('click', (evt) => {
         isPlaying = false;
         startButton.textContent = 'play_arrow';
+        
+        randomizeGrid();
+        console.log(grid);
+        updateView();
     });
 
 
@@ -79,4 +106,26 @@ function createControls() {
     container.append(startButton, resetButton, randomizeButton);
 
     root.appendChild(container);
+}
+
+function createGrid(rows, cols) {
+    const grid = [];
+
+    for (let i = 0; i < rows; i++) {
+        grid[i] = [];
+
+        for (let j = 0; j < cols; j++) {
+            grid[i][j] = 0;
+        }
+    }
+
+    return grid;
+}
+
+function randomizeGrid() {
+    for (let i = 0; i < grid.length; i++) {
+        for (let j = 0; j < grid[i].length; j++) {
+            grid[i][j] = Math.round(Math.random());
+        }
+    }
 }
